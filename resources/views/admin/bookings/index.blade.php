@@ -8,15 +8,15 @@
         <div class="row">
             <div class="col-12">
 
-                <div class="card">
-                    <div class="card-header">
+                <div class="card shadow-lg">
+                    <div class="card-header bg-primary text-white">
                         <h3 class="card-title">Booking Data</h3>
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table id="data-table" class="table table-bordered table-striped">
-                                <thead>
+                            <table id="data-table" class="table table-bordered table-hover table-striped">
+                                <thead class="thead-dark">
                                     <tr>
                                         <th>No</th>
                                         <th>Nama Lengkap</th>
@@ -27,7 +27,7 @@
                                         <th>Tanggal Akhir</th>
                                         <th>Durasi Sewa (Hari)</th>
                                         <th>Jumlah</th>
-                                        <th>Action</th>
+                                        <th class="text-center">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -43,28 +43,38 @@
                                             <td>{{ $booking->nama_lengkap }}</td>
                                             <td>{{ $booking->alamat_lengkap }}</td>
                                             <td>
-                                                <a href="tel:{{ $booking->nomer_wa }}">{{ $booking->nomer_wa }}</a>
+                                                <a href="tel:{{ $booking->nomer_wa }}" class="text-info">
+                                                    <i class="fas fa-phone"></i> {{ $booking->nomer_wa }}
+                                                </a>
                                             </td>
                                             <td>{{ $booking->car->nama_mobil }}</td>
                                             <td>{{ $booking->tanggal_awal }}</td>
                                             <td>{{ $booking->tanggal_akhir }}</td>
                                             <td>
-                                                <span class="durasi" 
-                                                data-start="{{ $booking->tanggal_awal }} T00:00:00" 
-                                                data-end="{{ $booking->tanggal_akhir }} T23:59:59">
-                                                {{ $booking->durasi }}
-                                                </span>
+                                                <!-- Menghitung durasi secara manual -->
+                                                @php
+                                                    $start = \Carbon\Carbon::parse($booking->tanggal_awal);
+                                                    $end = \Carbon\Carbon::parse($booking->tanggal_akhir);
+                                                    $durasi = $start->diffInDays($end);
+                                                @endphp
+                                                {{ $durasi }} hari
                                             </td>
                                             <td>
                                                 <strong>Rp{{ number_format($booking->jumlah, 0, ',', '.') }}</strong>
                                             </td>
-                                            <td>
+                                            <td class="text-center">
                                                 <div class="btn-group btn-group-sm">
-                                                    <form onclick="return confirm('Are you sure?')" action="{{ route('admin.bookings.destroy', $booking) }}"
-                                                        method="POST">
+                                                    {{-- <a href="{{ route('admin.bookings.edit', $booking->id) }}" class="btn btn-warning">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a> --}}
+                                                    <form action="{{ route('admin.bookings.destroy', $booking->id) }}" method="POST" 
+                                                        style="display:inline;" 
+                                                        onsubmit="return confirm('Are you sure?')">
                                                         @csrf
                                                         @method('DELETE')
-                                                        <button class="btn btn-sm btn-danger" type="submit"><i class="fa fa-trash"></i></button>
+                                                        <button class="btn btn-danger">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
                                                     </form>
                                                 </div>
                                             </td>
@@ -75,7 +85,7 @@
                                         </tr>
                                     @endforelse
                                 </tbody>
-                                <tfoot>
+                                <tfoot class="bg-light">
                                     <tr>
                                         <td colspan="8" class="text-right"><strong>Grand Total:</strong></td>
                                         <td><strong>Rp{{ number_format($grandTotal, 0, ',', '.') }}</strong></td>
@@ -101,6 +111,23 @@
 @push('style-alt')
   <!-- DataTables -->
   <link rel="stylesheet" href="https://cdn.datatables.net/1.13.3/css/jquery.dataTables.min.css">
+  <style>
+    /* Hover effect for table rows */
+    .table-hover tbody tr:hover {
+        background-color: #f5f5f5;
+    }
+
+    /* Icon style for action buttons */
+    .btn-group .btn {
+        margin: 0 2px;
+    }
+
+    /* Styling for card header */
+    .card-header {
+        background-color: #007bff;
+        color: white;
+    }
+  </style>
 @endpush
 
 @push('script-alt')
