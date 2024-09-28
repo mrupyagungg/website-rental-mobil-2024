@@ -5,6 +5,7 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Validator;
 
 class Booking extends Model
 {
@@ -44,14 +45,19 @@ class Booking extends Model
         parent::boot();
 
         static::creating(function ($booking) {
+            // Validasi jika tanggal tidak valid
+            if (!$booking->tanggal_awal || !$booking->tanggal_akhir) {
+                throw new \Exception('Tanggal awal dan akhir harus diisi.');
+            }
+
             $tanggalAwal = Carbon::parse($booking->tanggal_awal);
             $tanggalAkhir = Carbon::parse($booking->tanggal_akhir);
 
             // Hitung durasi dalam jam
             $durasiJam = $tanggalAkhir->diffInHours($tanggalAwal);
 
-            // Ambil harga dari mobil yang dipilih
-            $car = $booking->car()->first();
+            // Ambil harga dari mobil yang dipilih berdasarkan car_id
+            $car = Car::find($booking->car_id); // Menggunakan car_id yang sudah ada di booking
 
             if ($car) {
                 // Jika durasi lebih dari atau sama dengan 24 jam, hitung per hari
@@ -62,6 +68,8 @@ class Booking extends Model
                     // Jika kurang dari 24 jam, hitung harga setengah
                     $booking->jumlah = 0.5 * $car->price;
                 }
+            } else {
+                throw new \Exception('Mobil tidak ditemukan.');
             }
         });
     }

@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Frontend\CheckoutController;
+
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -50,3 +52,9 @@ Route::group(['middleware' => ['auth', 'is_admin'], 'prefix' => 'admin', 'as' =>
     Route::resource('bookings', \App\Http\Controllers\Admin\BookingController::class)->only(['index', 'destroy']);
     Route::resource('blogs', \App\Http\Controllers\Admin\BlogController::class);
 });
+
+Route::get('/checkout/{booking_id}', [CarController::class, 'checkout'])->name('frontend.checkout');
+Route::get('/payment/midtrans/{booking_id}', [CarController::class, 'paymentPage'])->name('frontend.payment.midtrans');
+
+
+Route::get('/checkout/{booking_id}', [CheckoutController::class, 'show'])->name('frontend.checkout');

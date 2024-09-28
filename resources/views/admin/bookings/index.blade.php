@@ -43,22 +43,28 @@
                                             <td>{{ $booking->nama_lengkap }}</td>
                                             <td>{{ $booking->alamat_lengkap }}</td>
                                             <td>
-                                                <a href="tel:{{ $booking->nomer_wa }}" class="text-info">
-                                                    <i class="fas fa-phone"></i> {{ $booking->nomer_wa }}
-                                                </a>
+                                                @if($booking->nomer_wa)
+                                                    <a href="tel:{{ $booking->nomer_wa }}" class="text-info">
+                                                        <i class="fas fa-phone"></i> {{ $booking->nomer_wa }}
+                                                    </a>
+                                                @else
+                                                    <span class="text-muted">Tidak tersedia</span>
+                                                @endif
                                             </td>
+                                            
                                             <td>{{ $booking->car->nama_mobil }}</td>
                                             <td>{{ $booking->tanggal_awal }}</td>
                                             <td>{{ $booking->tanggal_akhir }}</td>
                                             <td>
-                                                <!-- Menghitung durasi secara manual -->
+                                                <!-- Menampilkan durasi dengan data-atribut untuk JavaScript -->
                                                 @php
                                                     $start = \Carbon\Carbon::parse($booking->tanggal_awal);
                                                     $end = \Carbon\Carbon::parse($booking->tanggal_akhir);
-                                                    $durasi = $start->diffInDays($end);
                                                 @endphp
-                                                {{ $durasi }} hari
-                                            </td>
+                                                <span class="durasi" data-start="{{ $start }}" data-end="{{ $end }}">
+                                                    {{ $start->diffInDays($end) }} hari
+                                                </span>
+                                            </td>              
                                             <td>
                                                 <strong>Rp{{ number_format($booking->jumlah, 0, ',', '.') }}</strong>
                                             </td>

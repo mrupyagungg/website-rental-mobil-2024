@@ -151,13 +151,13 @@
                                 text: 'Nama Mobil'
                             }
                         },
-                        y: {
-                            beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: 'Jumlah Booking'
-                            }
-                        }
+                        // y: {
+                        //     beginAtZero: true,
+                        //     title: {
+                        //         display: true,
+                        //         text: 'Jumlah Booking'
+                        //     }
+                        // }
                     }
                 }
             });
